@@ -1,0 +1,17 @@
+power<- data.table::fread(input = "household_power_consumption.txt",na.strings="?")
+power$Date<-as.Date(power$Date,"%d/%m/%Y")
+power4<- power[(power$Date>= "2007-02-01") & (power$Date<= "2007-02-02")]
+power4$DateTime<-paste(power4$Date,power4$Time)
+power4$DateTime<-as.POSIXct(power4$DateTime,"%d/%m/%Y %H:%M:%S")
+png("plot4.png", width=480, height=480)
+par(mfrow=c(2,2))
+hist(power4[, Global_active_power], main="Global Active Power", xlab="Global Active Power (kilowatts)", ylab="Frequency", col="Red")
+plot(x = power4[, DateTime], y = power4[, Global_active_power], type="l", xlab="", ylab="Global Active Power (kilowatts)")
+plot(power4[, DateTime], power4[, Sub_metering_1], type="l", xlab="", ylab="Energy sub metering")
+lines(power4[, DateTime], power4[, Sub_metering_2],col="red")
+lines(power4[, DateTime], power4[, Sub_metering_3],col="blue")
+legend("topright", col=c("black","red","blue"), 
+       c("Sub_metering_1  ","Sub_metering_2  ", "Sub_metering_3  ")
+       ,lty=c(1,1), lwd=c(1,1))
+plot(power4[, DateTime], power4[,Global_reactive_power], type="l", xlab="datetime", ylab="Global_reactive_power")
+dev.off()
